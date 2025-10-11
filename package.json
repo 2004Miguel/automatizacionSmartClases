@@ -1,0 +1,15 @@
+{
+  "name": "smartclases",
+  "version": "1.0.0",
+  "description": "automatización de reserva de clases en la sede de Bello de Smart",
+  "license": "ISC",
+  "author": "Miguel Anjel Salazar Jaramillo",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "selenium-webdriver": "^4.36.0"
+  }
+}
