@@ -51,12 +51,22 @@ let optionPendientes = await driver.findElement(By.css('#vTPEAPROBO > option:nth
 await optionPendientes.click();
 
 //seleccionar la clase. Siempre se debe seleccionar desde la sexta fila
-let selectClase = await driver.findElement(By.id('Grid1ContainerRow_0006'));
+let selectClase = await driver.findElement(By.css('#Grid1ContainerRow_0011 > td:nth-child(6)'));
 await selectClase.click();
+await driver.sleep(2000);
 
+//hacer click en el botón de reservar
 let btnReservar = await driver.findElement(By.id('BUTTON1'));
 await btnReservar.click();
 await driver.sleep(2000);
+
+//obtener la fecha actual para saber que día se debe reservar la clase en formato dd/mm/yyyy
+let today = new Date();
+let dd = String(today.getDate()).padStart(2, '0');
+let mm = String(today.getMonth() + 1).padStart(2, '0'); //Enero es 0
+// let yyyy = today.getFullYear();
+let yyyy = 25; //Año en formato de dos dígitos
+today = dd + '/' + mm + '/' + yyyy; 
 
 
 }());
