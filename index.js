@@ -60,13 +60,16 @@ let btnReservar = await driver.findElement(By.id('BUTTON1'));
 await btnReservar.click();
 await driver.sleep(2000);
 
-//obtener la fecha actual para saber que día se debe reservar la clase en formato dd/mm/yyyy
-let today = new Date();
-let dd = String(today.getDate()).padStart(2, '0');
-let mm = String(today.getMonth() + 1).padStart(2, '0'); //Enero es 0
-// let yyyy = today.getFullYear();
-let yyyy = 25; //Año en formato de dos dígitos
-today = dd + '/' + mm + '/' + yyyy; 
+//salir del iframe principal para estar en el contexto principal
+await driver.switchTo().defaultContent();
+await driver.sleep(2000);
+
+//la selección de día y hora está dentro de un iframe, por lo que se debe cambiar a ese iframe
+let iframe2 = await driver.findElement(By.id('gxp1_ifrm'));
+await driver.switchTo().frame(iframe2);
+
+let selectDia = await driver.findElement(By.id('vDIA'));
+await selectDia.click();
 
 
 }());
