@@ -2,16 +2,19 @@ const {By, Builder, Browser} = require('selenium-webdriver');
 const assert = require("assert");
 const { ConsoleLogEntry } = require('selenium-webdriver/bidi/logEntries');
 
+var usuario = process.argv[2];
+var contrasena = process.argv[3];
+
 (async function example() {
 driver = await new Builder().forBrowser(Browser.CHROME).build();
 await driver.get('https://schoolpack.smart.edu.co/idiomas/alumnos.aspx');
 
 //inicio de sesión
 let inputUser = await driver.findElement(By.id('vUSUCOD'));
-await inputUser.sendKeys('1020102865');
+await inputUser.sendKeys(usuario);
 
 let inputPass = await driver.findElement(By.id('vPASS'));
-await inputPass.sendKeys('8del2del2004');
+await inputPass.sendKeys(contrasena);
 
 let btnLogin = await driver.findElement(By.id('BUTTON1'));
 await driver.sleep(1000);
@@ -71,5 +74,19 @@ await driver.switchTo().frame(iframe2);
 let selectDia = await driver.findElement(By.id('vDIA'));
 await selectDia.click();
 
+//seleccionar el día
+let optionDia = await driver.findElement(By.css('#vDIA > option:nth-child(2)'));
+await optionDia.click();
+await driver.sleep(2000);
+
+//seleccionar la hora
+let selectHora = await driver.findElement(By.id('Grid1ContainerRow_0008'));
+await selectHora.click();
+await driver.sleep(2000);
+
+//confirmar la reserva
+let btnConfirmar = await driver.findElement(By.id('BUTTON1'));
+await btnConfirmar.click();
+await driver.sleep(2000);
 
 }());
