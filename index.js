@@ -6,7 +6,13 @@ var usuario = process.argv[2];
 var contrasena = process.argv[3];
 
 (async function example() {
-driver = await new Builder().forBrowser(Browser.CHROME).build();
+const options = new Chrome.Options();
+options.addArguments('--headless=new'); // Ejecutar en modo headless (sin interfaz gráfica)
+options.addArguments('--no-sandbox'); // Necesario para entornos como Docker
+options.addArguments('--disable-dev-shm-usage'); // Evitar problemas de memoria compartida
+
+
+driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(options).build();
 await driver.get('https://schoolpack.smart.edu.co/idiomas/alumnos.aspx');
 
 //inicio de sesión
