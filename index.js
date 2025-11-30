@@ -6,7 +6,9 @@ var usuario = process.argv[2];
 var contrasena = process.argv[3];
 
 (async function example() {
-const options = new Chrome.Options();
+
+const options = new (require('selenium-webdriver/chrome').Options)();
+
 options.addArguments('--headless=new'); // Ejecutar en modo headless (sin interfaz gráfica)
 options.addArguments('--no-sandbox'); // Necesario para entornos como Docker
 options.addArguments('--disable-dev-shm-usage'); // Evitar problemas de memoria compartida
