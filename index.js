@@ -54,7 +54,7 @@ let optionPendientes = await driver.findElement(By.css('#vTPEAPROBO > option:nth
 await optionPendientes.click();
 
 //seleccionar la clase. Siempre se debe seleccionar desde la sexta fila
-let selectClase = await driver.findElement(By.css('#Grid1ContainerRow_0011 > td:nth-child(6)'));
+let selectClase = await driver.findElement(By.css('#Grid1ContainerRow_0012 > td:nth-child(6)'));
 await selectClase.click();
 await driver.sleep(2000);
 
@@ -80,7 +80,7 @@ await optionDia.click();
 await driver.sleep(2000);
 
 //seleccionar la hora
-let selectHora = await driver.findElement(By.id('Grid1ContainerRow_0008'));
+let selectHora = await driver.findElement(By.id('Grid1ContainerRow_0009'));
 await selectHora.click();
 await driver.sleep(2000);
 
