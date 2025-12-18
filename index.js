@@ -1,11 +1,34 @@
 const {By, Builder, Browser} = require('selenium-webdriver');
 const assert = require("assert");
 const { ConsoleLogEntry } = require('selenium-webdriver/bidi/logEntries');
+const fs = require('fs');
 
 var usuario = process.argv[2];
 var contrasena = process.argv[3];
 
+// Función para registrar mensajes en log.txt con timestamp
+function logToFile(message, tipo = 'INFO') {
+  const ahora = new Date();
+  const fecha = ahora.toLocaleDateString('es-CO');
+  const hora = ahora.toLocaleTimeString('es-CO');
+  const timestamp = `${fecha} ${hora}`;
+  const linea = `${timestamp} | ${tipo}: ${message}`;
+  fs.appendFileSync('log.txt', linea + '\n');
+}
+
+// Función para agregar separador en el log
+function agregarSeparador() {
+  fs.appendFileSync('log.txt', '\n');
+}
+
+const tiempoInicio = Date.now();
+
 (async function example() {
+
+try {
+  // Registrar inicio de ejecución
+  logToFile('========== INICIO DE EJECUCIÓN ==========', 'LOG');
+  logToFile(`Usuario: ${usuario}`, 'LOG');
 
 const options = new (require('selenium-webdriver/chrome').Options)();
 
@@ -81,8 +104,13 @@ try{
     let estadoError = await errorReserva.findElement(By.css('#TABLE2 > tbody > tr:nth-child(1) > td > div > span > div'))
     if (estadoError){
         let mensajeError = await errorReserva.getText();
-        console.log("No se pudo reservar la clase: " + mensajeError);
+        logToFile("No se pudo reservar la clase: " + mensajeError, 'ERROR');
         await driver.quit();
+        const duracion = Math.round((Date.now() - tiempoInicio) / 1000);
+        logToFile(`Duración: ${duracion} segundos`, 'LOG');
+        logToFile('Resultado: ERROR - Clase no disponible', 'LOG');
+        logToFile('========== FIN DE EJECUCIÓN ==========', 'LOG');
+        agregarSeparador();
         return;
     }
 
@@ -123,12 +151,36 @@ try{
     let estadoErrorHorario = await errorHorario.findElement(By.css('#TABLE2 > tbody > tr:nth-child(3) > td > div > span > div'));
     if (estadoErrorHorario){
         let mensajeErrorHorario = await errorHorario.getText();
-        console.log("No se pudo reservar la clase en el horario seleccionado: " + mensajeErrorHorario);
+        logToFile("No se pudo reservar la clase en el horario seleccionado: " + mensajeErrorHorario, 'ERROR');
         await driver.quit();
+        const duracion = Math.round((Date.now() - tiempoInicio) / 1000);
+        logToFile(`Duración: ${duracion} segundos`, 'LOG');
+        logToFile('Resultado: ERROR - Horario no disponible', 'LOG');
+        logToFile('========== FIN DE EJECUCIÓN ==========', 'LOG');
+        agregarSeparador();
         return;
     }
 }catch(e){
     //continuar con el flujo normal
+    logToFile("Clase reservada exitosamente.", 'SUCCESS');
+    await driver.quit();
+    const duracion = Math.round((Date.now() - tiempoInicio) / 1000);
+    logToFile(`Duración: ${duracion} segundos`, 'LOG');
+    logToFile('Resultado: EXITOSO', 'LOG');
+    logToFile('========== FIN DE EJECUCIÓN ==========', 'LOG');
+    agregarSeparador();
+}
+
+} catch(errorGlobal) {
+  logToFile("Error no controlado durante la ejecución: " + errorGlobal.message, 'ERROR');
+  try {
+    await driver.quit();
+  } catch(e) {}
+  const duracion = Math.round((Date.now() - tiempoInicio) / 1000);
+  logToFile(`Duración: ${duracion} segundos`, 'LOG');
+  logToFile('Resultado: ERROR - Excepción no controlada', 'LOG');
+  logToFile('========== FIN DE EJECUCIÓN ==========', 'LOG');
+  agregarSeparador();
 }
 
 }());
