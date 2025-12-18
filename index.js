@@ -30,7 +30,7 @@ await driver.sleep(1000);
 await btnLogin.click();
 await driver.sleep(1000);
 
-//click al modal que aparece
+//click para cerrar el modal que aparece
 let btnModal = await driver.findElement(By.id('gxp0_cls'));
 await btnModal.click();
 await driver.sleep(1000);
@@ -61,17 +61,38 @@ await filter.click();
 let optionPendientes = await driver.findElement(By.css('#vTPEAPROBO > option:nth-child(3)'));
 await optionPendientes.click();
 
-//seleccionar la clase. Siempre se debe seleccionar desde la sexta fila
-let selectClase = await driver.findElement(By.css('#Grid1ContainerRow_0012 > td:nth-child(6)'));
+//seleccionar la clase. Siempre se debe seleccionar desde la décima fila
+let selectClase = await driver.findElement(By.id('Grid1ContainerRow_0010'));
 await selectClase.click();
 await driver.sleep(2000);
 
-//hacer click en el botón de reservar
+//hacer click en el botón de Asignar
 let btnReservar = await driver.findElement(By.id('BUTTON1'));
 await btnReservar.click();
 await driver.sleep(2000);
 
-//salir del iframe principal para estar en el contexto principal
+//dentro de este span se agrega un div que muestra un error
+let errorReserva = await driver.findElement(By.css('#TABLE2 > tbody > tr:nth-child(1) > td > div > span'));
+
+try{
+    //este div solo aparece cuando hubo un error al reservar la clase. Por ejemplo, si ya no hay cupos, o si la clase ya fue reservada
+    //debe estar dentro de un try catch porque si no hay error, el findElement lanza una excepción y se detiene el flujo
+    //en caso de que no haya error, se continúa con el flujo normal
+    let estadoError = await errorReserva.findElement(By.css('#TABLE2 > tbody > tr:nth-child(1) > td > div > span > div'))
+    if (estadoError){
+        let mensajeError = await errorReserva.getText();
+        console.log("No se pudo reservar la clase: " + mensajeError);
+        await driver.quit();
+        return;
+    }
+
+}catch(e){
+    //continuar con el flujo normal
+}
+
+
+
+//salir del iframe actual de la selección de clase para volver al iframe principal
 await driver.switchTo().defaultContent();
 await driver.sleep(2000);
 
@@ -82,7 +103,7 @@ await driver.switchTo().frame(iframe2);
 let selectDia = await driver.findElement(By.id('vDIA'));
 await selectDia.click();
 
-//seleccionar el día
+//seleccionar el día. Siempre se selecciona el día siguiente al actual
 let optionDia = await driver.findElement(By.css('#vDIA > option:nth-child(2)'));
 await optionDia.click();
 await driver.sleep(2000);
@@ -96,5 +117,18 @@ await driver.sleep(2000);
 let btnConfirmar = await driver.findElement(By.id('BUTTON1'));
 await btnConfirmar.click();
 await driver.sleep(2000);
+
+let errorHorario = await driver.findElement(By.css('#TABLE2 > tbody > tr:nth-child(3) > td > div > span'));
+try{
+    let estadoErrorHorario = await errorHorario.findElement(By.css('#TABLE2 > tbody > tr:nth-child(3) > td > div > span > div'));
+    if (estadoErrorHorario){
+        let mensajeErrorHorario = await errorHorario.getText();
+        console.log("No se pudo reservar la clase en el horario seleccionado: " + mensajeErrorHorario);
+        await driver.quit();
+        return;
+    }
+}catch(e){
+    //continuar con el flujo normal
+}
 
 }());
